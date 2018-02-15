@@ -9,7 +9,7 @@ dbus_DATA = src/nrf24.conf
 bin_PROGRAMS = src/nrfd
 noinst_PROGRAMS =
 
-noinst_LTLIBRARIES = ell/libell-internal.la
+noinst_LIBRARIES = ell/libell-internal.a
 
 ell_sources = ell/ell.h ell/private.h ell/missing.h \
 			ell/util.h ell/util.c \
@@ -60,7 +60,7 @@ ell_sources = ell/ell.h ell/private.h ell/missing.h \
 			ell/file.h ell/file.c \
 			ell/dbus-client.h ell/dbus-client.c
 
-ell_libell_internal_la_SOURCES = $(ell_sources)
+ell_libell_internal_a_SOURCES = $(ell_sources)
 
 src_nrfd_SOURCES = src/main.c \
 		   src/settings.h src/settings.c \
@@ -71,7 +71,7 @@ src_nrfd_SOURCES = src/main.c \
 		   src/dbus.h src/dbus.c
 
 src_nrfd_LDADD = @JSON_LIBS@ \
-		ell/libell-internal.la -lm
+		ell/libell-internal.a -lm
 
 src_nrfd_LDFLAGS = $(AM_LDFLAGS)
 src_nrfd_CFLAGS = $(AM_CFLAGS) @JSON_CFLAGS@
