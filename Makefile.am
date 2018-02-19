@@ -17,10 +17,10 @@ src_nrfd_SOURCES = src/main.c \
 		   src/storage.h src/storage.c \
 		   src/dbus.h src/dbus.c
 
-src_nrfd_LDADD = @JSON_LIBS@ @ELL_LIBS@
+src_nrfd_LDADD = @JSON_LIBS@ @ELL_LIBS@ @KNOT_PROTOCOL_LIBS@
 
 src_nrfd_LDFLAGS = $(AM_LDFLAGS)
-src_nrfd_CFLAGS = $(AM_CFLAGS) @JSON_CFLAGS@ @ELL_CFLAGS@
+src_nrfd_CFLAGS = $(AM_CFLAGS) @JSON_CFLAGS@ @ELL_CFLAGS@ @KNOT_PROTOCOL_CFLAGS@
 
 EXTRA_DIST = src/nrf24.conf
 

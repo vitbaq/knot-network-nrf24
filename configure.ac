@@ -39,6 +39,12 @@ PKG_CHECK_MODULES(ELL, ell,
 AC_SUBST(ELL_CFLAGS)
 AC_SUBST(ELL_LIBS)
 
+PKG_CHECK_MODULES(KNOT_PROTOCOL, knot-protocol,
+  [AC_DEFINE([HAVE_KNOT_PROTOCOL],[1],[Use KNOT_PROTOCOL])],
+  [AC_MSG_ERROR("knot-protocol missing")])
+AC_SUBST(KNOT_PROTOCOL_CFLAGS)
+AC_SUBST(KNOT_PROTOCOL_LIBS)
+
 AC_ARG_ENABLE(optimization, AC_HELP_STRING([--disable-optimization],
 			[disable code optimization through compiler]), [
 	if (test "${enableval}" = "no"); then
