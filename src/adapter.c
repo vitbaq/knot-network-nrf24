@@ -51,6 +51,7 @@
 
 struct nrf24_adapter {
 	struct nrf24_mac addr;
+	unit64_t id;
 	char *path;			/* Object path */
 	char *keys_pathname;
 	bool powered;
@@ -63,6 +64,7 @@ struct nrf24_adapter {
 
 struct idle_pipe {
 	struct nrf24_mac addr;	/* Peer/Device address */
+	uint64_t id		/* Peer/Device identification */
 	struct l_idle *idle;	/* Polling idle for radio data */
 	int rxsock;		/* nRF24 HAL COMM socket */
 	int txsock;		/* knotd/upperlayer socket */
@@ -409,6 +411,7 @@ static int8_t evt_presence(struct mgmt_nrf24_header *mhdr, ssize_t rbytes)
 	pipe->rxsock = nsk; /* Radio */
 	pipe->txsock = sock; /* knotd */
 	pipe->addr = evt_pre->mac;
+	pipe->id = evt_pre->mac.address.uint64;
 	pipe->timestamp = hal_time_ms();
 	pipe->idle = l_idle_create(radio_idle_read, pipe,
 				   radio_idle_destroy);
@@ -470,6 +473,7 @@ static int radio_init(uint8_t channel, const struct nrf24_mac *addr)
 {
 	const struct nrf24_config config = {
 			.mac = *addr,
+			.id = mac->address.uint64,
 			.channel = channel,
 			.name = "nrf0" };
 	int err;
@@ -616,6 +620,7 @@ int adapter_start(const char *host, const char *keys_pathname,
 	adapter.path = l_strdup(path);
 	adapter.keys_pathname = l_strdup(keys_pathname);
 	adapter.addr = *mac;
+	adapter.id = mac->address.uint64;
 	adapter.powered = true;
 
 	/* nRF24 Adapter object */
