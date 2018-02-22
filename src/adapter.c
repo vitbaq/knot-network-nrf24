@@ -701,8 +701,7 @@ int adapter_start(const char *host, const char *keys_pathname,
 	device_start();
 	proxy_start(proxy_removed);
 
-	/* Load & create/register stored devices */
-	storage_foreach(adapter.keys_pathname, register_device, &adapter);
+	/* TODO: Load & create/register stored devices */
 
 	return 0;
 }
