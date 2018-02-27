@@ -533,13 +533,24 @@ static void store_device(const char *addr, uint64_t id, const char *name)
 	storage_write_key_uint64(adapter.keys_pathname, addr, "id", id);
 }
 
+static void remove_stored_device(const char *addr)
+{
+	storage_remove_group(adapter.keys_pathname, addr);
+}
+
 static bool offline_foreach(const void *key, void *value, void *user_data)
 {
+	const struct nrf24_mac *addr = key;
 	struct nrf24_device *device = value;
 	const char *path = user_data;
+	char mac_str[24];
 
 	if (strcmp(path, device_get_path(device)))
 		return false;
+
+	nrf24_mac2str(addr, mac_str);
+
+	remove_stored_device(mac_str);
 
 	device_destroy(device);
 
@@ -552,6 +563,7 @@ static bool paging_foreach(const void *key, void *value, void *user_data)
 	struct nrf24_device *device = value;
 	const char *path = user_data;
 	struct idle_pipe *pipe;
+	char mac_str[24];
 
 	if (strcmp(path, device_get_path(device)))
 		return false;
@@ -559,6 +571,10 @@ static bool paging_foreach(const void *key, void *value, void *user_data)
 	pipe = l_queue_remove_if(adapter.idle_list, pipe_match_addr, addr);
 	if (!pipe)
 		return false;
+
+	nrf24_mac2str(addr, mac_str);
+
+	remove_stored_device(mac_str);
 
 	l_idle_oneshot(remove_idle_oneshot, pipe->idle, NULL);
 
@@ -573,6 +589,7 @@ static bool online_foreach(const void *key, void *value, void *user_data)
 	struct nrf24_device *device = value;
 	const char *path = user_data;
 	struct idle_pipe *pipe;
+	char mac_str[24];
 
 	if (strcmp(path, device_get_path(device)))
 		return false;
@@ -580,6 +597,10 @@ static bool online_foreach(const void *key, void *value, void *user_data)
 	pipe = l_queue_remove_if(adapter.idle_list, pipe_match_rxsock, rxsock);
 	if (!pipe)
 		return false;
+
+	nrf24_mac2str(&pipe->addr, mac_str);
+
+	remove_stored_device(mac_str);
 
 	l_idle_oneshot(remove_idle_oneshot, pipe->idle, NULL);
 
