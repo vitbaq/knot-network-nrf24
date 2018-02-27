@@ -527,6 +527,12 @@ static void radio_stop(void)
 	hal_comm_deinit();
 }
 
+static void store_device(const char *addr, uint64_t id, const char *name)
+{
+	storage_write_key_string(adapter.keys_pathname, addr, "name", name);
+	storage_write_key_uint64(adapter.keys_pathname, addr, "id", id);
+}
+
 static bool offline_foreach(const void *key, void *value, void *user_data)
 {
 	struct nrf24_device *device = value;
@@ -601,6 +607,8 @@ static struct l_dbus_message *method_add_device(struct l_dbus *dbus,
 	device = device_create(adapter->path, &addr, id, "unknown", true);
 	if (!device)
 		return dbus_error_invalid_args(msg);
+
+	store_device(mac_str, id, "unknown");
 
 	l_hashmap_insert(adapter->offline_list, &addr, device);
 
